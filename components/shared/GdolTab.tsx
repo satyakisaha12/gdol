@@ -38,7 +38,7 @@ interface Props {
   accountType: string;
 }
 
-async function gdolTab({ currentUserId, accountId, accountType }: Props) {
+async function GdolTab({ currentUserId, accountId, accountType }: Props) {
   let result: Result;
 
   if (accountType === "Community") {
@@ -82,4 +82,4 @@ async function gdolTab({ currentUserId, accountId, accountType }: Props) {
   );
 }
 
-export default gdolTab;
+export default GdolTab;

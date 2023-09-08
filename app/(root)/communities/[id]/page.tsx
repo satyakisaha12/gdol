@@ -4,7 +4,7 @@ import { currentUser } from "@clerk/nextjs";
 import { communityTabs } from "@/constants";
 
 import UserCard from "@/components/cards/UserCard";
-import gdolTab from "@/components/shared/gdolTab";
+import GdolTab from "@/components/shared/GdolTab";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -53,7 +53,7 @@ async function Page({ params }: { params: { id: string } }) {
 
           <TabsContent value='gdol' className='w-full text-light-1'>
             {/* @ts-ignore */}
-            <gdolTab
+            <GdolTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType='Community'
@@ -77,7 +77,7 @@ async function Page({ params }: { params: { id: string } }) {
 
           <TabsContent value='requests' className='w-full text-light-1'>
             {/* @ts-ignore */}
-            <gdolTab
+            <GdolTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType='Community'
