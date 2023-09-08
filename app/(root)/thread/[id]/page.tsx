@@ -24,14 +24,15 @@ async function page({ params }: { params: { id: string } }) {
     <section className='relative'>
       <div>
         <ThreadCard
-          id={thread._id}
+          id={thread ? thread._id : ''}
           currentUserId={user.id}
-          parentId={thread.parentId}
-          content={thread.text}
-          author={thread.author}
-          community={thread.community}
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          parentId={thread ? thread.parentId : ''}
+          content={thread ? thread.text : ''}
+          author={thread ? thread.author : ''}
+          community={thread ? thread.community : ''}
+          createdAt={thread ? thread.createdAt : ''}
+          comments={thread ? thread.children : ''}
+
         />
       </div>
 
