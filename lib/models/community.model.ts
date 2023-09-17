@@ -9,12 +9,16 @@ const communitySchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
+    trim: true, // Remove leading/trailing spaces
   },
   name: {
     type: String,
     required: true,
   },
-  image: String,
+  image: {
+    type: String,
+    default: "", 
+  },
   bio: String,
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -33,6 +37,8 @@ const communitySchema = new mongoose.Schema({
     },
   ],
 });
+
+communitySchema.index({ username: 1 }, { unique: true });
 
 const Community =
   mongoose.models.Community || mongoose.model("Community", communitySchema);

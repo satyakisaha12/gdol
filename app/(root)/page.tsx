@@ -1,42 +1,67 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-
+import React, { useEffect, useState } from "react";
 import ThreadCard from "@/components/cards/ThreadCard";
 import Pagination from "@/components/shared/Pagination";
-
 import { fetchPosts } from "@/lib/actions/thread.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 
-async function Home({
-  searchParams,
-}: {
+interface HomeProps {
   searchParams: { [key: string]: string | undefined };
-}) {
-  const user = await currentUser();
-  if (!user) return null;
+}
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+const Home: React.FC<HomeProps> = ({ searchParams }) => {
+  const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
 
-  const result = await fetchPosts(
-    searchParams.page ? +searchParams.page : 1,
-    30
-  );
+  useEffect(() => {
+    async function fetchData() {
+      const currentUserData = await currentUser();
+
+      if (!currentUserData) {
+        return;
+      }
+
+      setUser(currentUserData);
+
+      const userInformation = await fetchUser(currentUserData.id);
+      if (!userInformation?.onboarded) {
+        redirect("/onboarding");
+        return;
+      }
+
+      setUserInfo(userInformation);
+
+      const result = await fetchPosts(
+        searchParams.page ? +searchParams.page : 1,
+        30
+      );
+
+      setPosts(result.posts);
+      setIsFetching(false);
+    }
+
+    fetchData();
+  }, [searchParams]);
 
   return (
     <>
-      <h1 className='head-text text-left'>Home</h1>
+      <h1 className="head-text text-left">Home</h1>
 
-      <section className='mt-9 flex flex-col gap-10'>
-        {result.posts.length === 0 ? (
-          <p className='no-result'>No gdol found</p>
+      <section className="mt-9 flex flex-col gap-10">
+        {isFetching ? (
+          <p>Loading...</p>
+        ) : posts.length === 0 ? (
+          <p className="no-result">No gdol found</p>
         ) : (
           <>
-            {result.posts.map((post) => (
+            {posts.map((post) => (
               <ThreadCard
                 key={post._id}
                 id={post._id}
-                currentUserId={user.id}
+                currentUserId={user?.id}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
@@ -50,12 +75,12 @@ async function Home({
       </section>
 
       <Pagination
-        path='/'
+        path="/"
         pageNumber={searchParams?.page ? +searchParams.page : 1}
-        isNext={result.isNext}
+        isNext={!isFetching && posts.length > 0}
       />
     </>
   );
-}
+};
 
 export default Home;
